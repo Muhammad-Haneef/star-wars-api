@@ -197,19 +197,19 @@ class MovieController extends Controller
      */
     public function search(Request $request)
     {
-
+        // Validate the incoming request data
         $request->validate([
             "keyword" => "required",
         ]);
 
 
-       // Retrieve all movies
+       // Retrieve all movies with complete dat
         //$movies = Movie::where('title', 'like', '%' . $keyword . '%')->get();
 
         // Retrieve all movies with most relevant data.
         $movies = Movie::select('id', 'title', 'opening_crawl', 'director', 'producer', 'release_date')->where('title', 'like', '%' . $request->keyword . '%')->get();
 
-        // Check if movies exist
+       // Check if movies exist
         if (count($movies) > 0) {
 
             /*
@@ -227,7 +227,7 @@ class MovieController extends Controller
                 "data" => $movies,
             ]);
         } else {
-            // Return a JSON response with failure message
+           // Return a JSON response with failure message
             return response()->json([
                 "status" => false,
                 "message" => "Sorry! Records not found",
@@ -240,7 +240,10 @@ class MovieController extends Controller
 
 
 
-
+    /**
+     *   Parameters : movie data
+     *   Activity : Get all movie related data
+     */
     public function getMovieRelatedData($movie)
     {
         $movie->characters = People::whereIn('id', explode(',', $movie->characters))->get();
