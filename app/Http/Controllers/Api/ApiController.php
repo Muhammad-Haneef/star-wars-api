@@ -121,6 +121,7 @@ class ApiController extends Controller
         if (!empty($user)) {
             // User exists
             if (Hash::check($request->password, $user->password)) {
+
                 // Password matched
                 $token = $user->createToken("token")->accessToken;
 
