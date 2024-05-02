@@ -13,6 +13,13 @@ use App\Models\Specie;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Info(
+ *        title="Star Wars APIs",
+ *        version="1.0.0"
+ *    )
+ */
+
 class MovieController extends Controller
 {
     /**
@@ -21,6 +28,45 @@ class MovieController extends Controller
      *   Method : GET
      *   Parameters : null
      *   Activity : Get list of all movies.
+     */
+    /**
+     * Retrieve all movies.
+     *
+     * @OA\Get(
+     *     path="/api/movies",
+     *     summary="Get list of all movies",
+     *     tags={"Movies"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Data found"),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="title", type="string", example="Star Wars"),
+     *                     @OA\Property(property="opening_crawl", type="string", example="A long time ago in a galaxy far, far away..."),
+     *                     @OA\Property(property="director", type="string", example="George Lucas"),
+     *                     @OA\Property(property="producer", type="string", example="Gary Kurtz, Rick McCallum"),
+     *                     @OA\Property(property="release_date", type="string", format="date", example="1977-05-25"),
+     *                 ),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Records not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Sorry! Records not found"),
+     *             @OA\Property(property="data", type="array", example="[]"),
+     *         ),
+     *     ),
+     * )
      */
     public function index()
     {
@@ -187,7 +233,7 @@ class MovieController extends Controller
         }
     }
 
-    
+
     /**
      * Remove the specified resource from storage.
      * 
@@ -203,13 +249,13 @@ class MovieController extends Controller
         ]);
 
 
-       // Retrieve all movies with complete dat
+        // Retrieve all movies with complete dat
         //$movies = Movie::where('title', 'like', '%' . $keyword . '%')->get();
 
         // Retrieve all movies with most relevant data.
         $movies = Movie::select('id', 'title', 'opening_crawl', 'director', 'producer', 'release_date')->where('title', 'like', '%' . $request->keyword . '%')->get();
 
-       // Check if movies exist
+        // Check if movies exist
         if (count($movies) > 0) {
 
             /*
@@ -227,15 +273,13 @@ class MovieController extends Controller
                 "data" => $movies,
             ]);
         } else {
-           // Return a JSON response with failure message
+            // Return a JSON response with failure message
             return response()->json([
                 "status" => false,
                 "message" => "Sorry! Records not found",
                 "data" => [],
             ]);
         }
-
-
     }
 
 
