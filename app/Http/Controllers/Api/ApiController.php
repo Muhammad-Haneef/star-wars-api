@@ -10,14 +10,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 
-
+/**
+ * @OA\Info(
+ *        title="Star Wars APIs",
+ *        version="1.0.0"
+ *    )
+ */
 class ApiController extends Controller
 {
-
-
     /**
      *   Method : POST
-     *   Parameters : name, email, password
+     *   Parameters : name, email, password, password_confirmation
      *   Activity : Register a new user.
      */
     public function register(Request $request)
@@ -70,22 +73,25 @@ class ApiController extends Controller
             "password" => "required",
         ]);
 
-        // Check if the user exists
+        // Check if the email exists
         $user = User::where("email", $request->email)->first();
 
         if (!empty($user)) {
             // User exists
             if (Hash::check($request->password, $user->password)) {
-
                 // Password matched
                 $token = $user->createToken("token")->accessToken;
 
-                // Return a JSON response indicating successful login
+                // Return a JSON response indicating successful login, with user data
                 return response()->json([
                     "status" => true,
                     "message" => "User authenticated successfully",
                     "token" => $token,
-                    "data" => [],
+                    "data" => [
+                        'id'=>$user->id,
+                        'name'=>$user->name,
+                        'email'=>$user->email,
+                    ],
                 ]);
             } else {
                 // Invalid password
@@ -114,7 +120,7 @@ class ApiController extends Controller
 
     /*
         Method : GET
-        Parameters : token
+        Parameters : token in header
         Activity : Retrieve the profile of the authenticated user.
     */
     public function profile(Request $request)
@@ -135,7 +141,7 @@ class ApiController extends Controller
 
     /*
         Method : GET
-        Parameters : token
+        Parameters : token in header
         Activity : Log out the authenticated user.
     */
     public function logout(Request $request)

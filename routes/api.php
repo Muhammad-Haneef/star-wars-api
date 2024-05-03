@@ -21,8 +21,8 @@ Route::group([
     Route::get("movies", [MovieController::class, "index"]);
     Route::get("movie/{id}", [MovieController::class, "show"]);
     Route::post("movie/update/{id}", [MovieController::class, "update"]);
-    Route::get("movie/delete/{id}", [MovieController::class, "destroy"]);
-    Route::post("movie/search", [MovieController::class, "search"]);
+    Route::delete("movie/delete/{id}", [MovieController::class, "destroy"]);
+    Route::post("movies/search", [MovieController::class, "search"]);
 
     Route::get("logout", [ApiController::class, "logout"]);
 });

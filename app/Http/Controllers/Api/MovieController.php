@@ -13,60 +13,14 @@ use App\Models\Specie;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-/**
- * @OA\Info(
- *        title="Star Wars APIs",
- *        version="1.0.0"
- *    )
- */
-
 class MovieController extends Controller
 {
     /**
      * Display a listing of the resource.
      * 
      *   Method : GET
-     *   Parameters : null
+     *   Parameters : token in header
      *   Activity : Get list of all movies.
-     */
-    /**
-     * Retrieve all movies.
-     *
-     * @OA\Get(
-     *     path="/api/movies",
-     *     summary="Get list of all movies",
-     *     tags={"Movies"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Data found"),
-     *             @OA\Property(property="data", type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="title", type="string", example="Star Wars"),
-     *                     @OA\Property(property="opening_crawl", type="string", example="A long time ago in a galaxy far, far away..."),
-     *                     @OA\Property(property="director", type="string", example="George Lucas"),
-     *                     @OA\Property(property="producer", type="string", example="Gary Kurtz, Rick McCallum"),
-     *                     @OA\Property(property="release_date", type="string", format="date", example="1977-05-25"),
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Records not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Sorry! Records not found"),
-     *             @OA\Property(property="data", type="array", example="[]"),
-     *         ),
-     *     ),
-     * )
      */
     public function index()
     {
@@ -90,14 +44,14 @@ class MovieController extends Controller
             // Return a JSON response with success message and data
             return response()->json([
                 "status" => true,
-                "message" => "Data found",
+                "message" => "Movies data retrieved successfully.",
                 "data" => $movies,
             ]);
         } else {
             // Return a JSON response with failure message
             return response()->json([
                 "status" => false,
-                "message" => "Sorry! Records not found",
+                "message" => "Sorry! Movies data not found.",
                 "data" => [],
             ]);
         }
@@ -115,10 +69,10 @@ class MovieController extends Controller
      * Display the specified resource.
      * 
      *   Method : GET
-     *   Parameters : id
+     *   Parameters : token in header, id
      *   Activity : Get perticular movie by id.
      */
-    public function show(string $id)
+    public function show($id)
     {
         // Retrieve the movie by id
         $movie = Movie::find($id);
@@ -131,14 +85,14 @@ class MovieController extends Controller
             // Return a JSON response with success message and data
             return response()->json([
                 "status" => true,
-                "message" => "Data found",
+                "message" => "Movie data retrieved successfully.",
                 "data" => $movie,
             ]);
         } else {
             // Return a JSON response with failure message
             return response()->json([
                 "status" => false,
-                "message" => "Sorry! Records not found",
+                "message" => "Movie not found.",
                 "data" => [],
             ]);
         }
@@ -150,22 +104,22 @@ class MovieController extends Controller
      * Update the specified resource in storage.
      * 
      *   Method : POST
-     *   Parameters : title, opening_crawl, director, producer, release_date
+     *   Parameters : token in header, title, opening_crawl, director, producer, release_date
      *   Activity : Update movie record.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         // Validate the incoming request data
         $request->validate([
-            "title" => "required|string",
-            "opening_crawl" => "required|string",
-            "director" => "required|string",
-            "producer" => "required|string",
+            "title" => "required|string|max:255",
+            "opening_crawl" => "required|string|max:255",
+            "director" => "required|string|max:255",
+            "producer" => "required|string|max:255",
             "release_date" => "required|date"
         ]);
 
         // Retrieve the movie by id
-        $movie = Movie::find($id);
+        $movie = Movie::find($id);        
 
         // Check if the movie exists
         if ($movie) {
@@ -176,14 +130,14 @@ class MovieController extends Controller
                 // Return a JSON response indicating record updated successfully.
                 return response()->json([
                     "status" => true,
-                    "message" => "Record updated successfully",
+                    "message" => "Movie updated successfully.",
                     "data" => $movie,
                 ]);
             } catch (\Exception $e) {
                 // Return a JSON response indicating updation failure
                 return response()->json([
                     "status" => false,
-                    "message" => "Record updation failed. Please try again later.",
+                    "message" => "Movie record updation failed. Please try again later.",
                     "error" => $e->getMessage(),
                 ], 500);
             }
@@ -191,7 +145,7 @@ class MovieController extends Controller
             // Return a JSON response if the movie is not found
             return response()->json([
                 "status" => false,
-                "message" => "Sorry! Records not found to update",
+                "message" => "Movie record updation failed. Please try again later.",
                 "data" => [],
             ]);
         }
@@ -203,8 +157,8 @@ class MovieController extends Controller
     /**
      * Remove the specified resource from storage.
      * 
-     *   Method : GET
-     *   Parameters : id
+     *   Method : DELETE
+     *   Parameters : token in header, id
      *   Activity : Delete movie record by id.
      */
     public function destroy(string $id)
@@ -220,42 +174,43 @@ class MovieController extends Controller
             // Return a JSON response indicating record deleted successfully.
             return response()->json([
                 "status" => true,
-                "message" => "Record has been deleted successfully",
-                "data" => $movie,
+                "message" => "Movie has been deleted successfully.",
+                "data" => [],
             ]);
         } else {
             // Return a JSON response if the movie is not found
             return response()->json([
                 "status" => false,
-                "message" => "Sorry! Records not found",
+                "message" => "Movie does not exist.",
                 "data" => [],
             ]);
         }
     }
 
-
+    
     /**
      * Remove the specified resource from storage.
      * 
-     *   Method : POST
-     *   Parameters : title
+     *   Method : GEt
+     *   Parameters : token in header, title
      *   Activity : Search movie by title
      */
     public function search(Request $request)
     {
+
         // Validate the incoming request data
         $request->validate([
             "keyword" => "required",
         ]);
 
 
-        // Retrieve all movies with complete dat
+       // Retrieve all movies with complete dat
         //$movies = Movie::where('title', 'like', '%' . $keyword . '%')->get();
 
         // Retrieve all movies with most relevant data.
         $movies = Movie::select('id', 'title', 'opening_crawl', 'director', 'producer', 'release_date')->where('title', 'like', '%' . $request->keyword . '%')->get();
 
-        // Check if movies exist
+       // Check if movies exist
         if (count($movies) > 0) {
 
             /*
@@ -269,17 +224,19 @@ class MovieController extends Controller
             // Return a JSON response with success message and data
             return response()->json([
                 "status" => true,
-                "message" => "Data found",
+                "message" => "Movies search result.",
                 "data" => $movies,
             ]);
         } else {
-            // Return a JSON response with failure message
+           // Return a JSON response with failure message
             return response()->json([
                 "status" => false,
-                "message" => "Sorry! Records not found",
+                "message" => "No serch result found.",
                 "data" => [],
             ]);
         }
+
+
     }
 
 

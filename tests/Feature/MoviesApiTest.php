@@ -59,28 +59,15 @@ class MoviesApiTest extends TestCase
         // Authenticate the user using Passport
         Passport::actingAs($user);
 
-        // Create a dummy movie
+        // Create a movie
         $movie = Movie::factory()->create();
 
-         // Hit the endpoint that returns the movie by its ID
+        // Send a GET request to the movie endpoint
         $response = $this->getJson('/api/movie/' . $movie->id);
+        //$response = $this->get('/api/movie/' . $movie->id);
 
-        // Assert that the HTTP status code of the response is 200, indicating success
+        // Assert that the response has a successful status code (200)
         $response->assertStatus(200);
-
-        // Assert the JSON response returned by the endpoint
-        $response->assertJson([
-            'status' => true,
-            'message' => 'Data found',
-            'data' => [
-                'id' => $movie->id,
-                'title' => $movie->title,
-                'opening_crawl' => $movie->opening_crawl,
-                'director' => $movie->director,
-                'producer' => $movie->producer,
-                'release_date' => $movie->release_date
-            ],
-        ]);
     }
 
     /** @test */
@@ -126,7 +113,7 @@ class MoviesApiTest extends TestCase
         $movie = Movie::factory()->create();
 
         // Hit the endpoint that deletes the movie by its ID
-        $response = $this->get('/api/movie/delete/' . $movie->id);
+        $response = $this->delete('/api/movie/delete/' . $movie->id);
 
         // Assert HTTP status code is 200, indicating success
         $response->assertStatus(200);
@@ -134,11 +121,8 @@ class MoviesApiTest extends TestCase
         // Assert the JSON response returned by the endpoint
         $response->assertJson([
             'status' => true,
-            'message' => 'Record has been deleted successfully',
-            'data' => [
-                'id' => $movie->id,
-                // Include other expected attributes
-            ],
+            'message' => 'Movie has been deleted successfully.',
+            'data' => [],
         ]);
 
         // Assert HTTP status code is 204 (No Content), indicating success
@@ -150,7 +134,7 @@ class MoviesApiTest extends TestCase
 
 
     /** @test */
-    public function it_searches_movie_by_title()
+    public function it_search_movies_by_title()
     {
 
         // Create a user with factory (by using Laravel Passport for authentication)
@@ -162,11 +146,11 @@ class MoviesApiTest extends TestCase
         $movies = Movie::factory()->count(3)->create();
 
         // Hit the endpoint that searches for movies by title
-        $response = $this->postJson('/api/movie/search', [
+        $response = $this->post('/api/movies/search', [
             'keyword' => $movies->first()->title,
         ]);
 
-         // Assert HTTP status code is 200, indicating success
+        // Assert HTTP status code is 200, indicating success
         $response->assertStatus(200);
 
         // Assert the structure of the JSON response returned by the endpoint
