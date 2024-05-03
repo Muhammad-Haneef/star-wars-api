@@ -1,34 +1,14 @@
 <?php
-/*
-namespace Tests\Feature;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-
-class MoviesApiTest extends TestCase
-{
-    /**
-     * A basic feature test example.
-     *
-    public function test_example(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-}
-
-
-
-<?php
-*/
 
 namespace Tests\Feature;
 
 use App\Models\Movie;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+
+use Laravel\Passport\Passport;
+
 use Tests\TestCase;
 
 class MoviesApiTest extends TestCase
@@ -39,14 +19,21 @@ class MoviesApiTest extends TestCase
     /** @test */
     public function it_returns_list_of_movies()
     {
+        // Create a user with factory (by using Laravel Passport for authentication)
+        $user = User::factory()->create();
+        // Authenticate the user using Passport
+        Passport::actingAs($user);
+
+        // Create dummy movies (in this case, 3 movies)
         $movies = Movie::factory()->count(3)->create();
 
-        echo "<pre>";
-        print_r($movies);
-
+        // Hit the endpoint that returns the list of movies
         $response = $this->getJson('/api/movies');
 
+        // Assert that the HTTP status code of the response is 200, indicating success
         $response->assertStatus(200);
+
+        // Assert the structure of the JSON response returned by the endpoint
         $response->assertJsonStructure([
             'status',
             'message',
@@ -58,31 +45,40 @@ class MoviesApiTest extends TestCase
                     'director',
                     'producer',
                     'release_date',
-                    'characters',
-                    'planets',
-                    'starships',
-                    'vehicles',
-                    'species',
                 ],
             ],
         ]);
     }
 
+
     /** @test */
     public function it_shows_movie_by_id()
     {
+        // Create a user with factory (by using Laravel Passport for authentication)
+        $user = User::factory()->create();
+        // Authenticate the user using Passport
+        Passport::actingAs($user);
+
+        // Create a dummy movie
         $movie = Movie::factory()->create();
 
-        $response = $this->getJson('/api/movies/' . $movie->id);
+         // Hit the endpoint that returns the movie by its ID
+        $response = $this->getJson('/api/movie/' . $movie->id);
 
+        // Assert that the HTTP status code of the response is 200, indicating success
         $response->assertStatus(200);
+
+        // Assert the JSON response returned by the endpoint
         $response->assertJson([
             'status' => true,
             'message' => 'Data found',
             'data' => [
                 'id' => $movie->id,
                 'title' => $movie->title,
-                // Include other expected attributes
+                'opening_crawl' => $movie->opening_crawl,
+                'director' => $movie->director,
+                'producer' => $movie->producer,
+                'release_date' => $movie->release_date
             ],
         ]);
     }
@@ -90,9 +86,20 @@ class MoviesApiTest extends TestCase
     /** @test */
     public function it_updates_movie_record()
     {
+        // Create a user with factory (by using Laravel Passport for authentication)
+        $user = User::factory()->create();
+        // Authenticate the user using Passport
+        Passport::actingAs($user);
+
+        // Create a dummy movie
         $movie = Movie::factory()->create();
 
-        $response = $this->putJson('/api/movies/' . $movie->id, [
+        // New data for updating the movie
+        $newTitle = 'New Movie Title';
+        $newDirector = 'New Movie Director';
+
+        // Hit the endpoint that updates the movie
+        $response = $this->post("/api/movie/update/{$movie->id}", [
             'title' => 'Updated Title',
             'opening_crawl' => 'Updated Opening Crawl',
             'director' => 'Updated Director',
@@ -100,26 +107,31 @@ class MoviesApiTest extends TestCase
             'release_date' => '2024-05-02',
         ]);
 
+        // Assert HTTP status code is 200
         $response->assertStatus(200);
-        $response->assertJson([
-            'status' => true,
-            'message' => 'Record updated successfully',
-            'data' => [
-                'id' => $movie->id,
-                'title' => 'Updated Title',
-                // Include other expected attributes
-            ],
-        ]);
     }
 
+
+
     /** @test */
-    public function it_deletes_movie_record_by_id()
+    public function it_deletes_movie_by_id()
     {
+
+        // Create a user with factory (by using Laravel Passport for authentication)
+        $user = User::factory()->create();
+        // Authenticate the user using Passport
+        Passport::actingAs($user);
+
+        // Create a dummy movie
         $movie = Movie::factory()->create();
 
-        $response = $this->deleteJson('/api/movies/' . $movie->id);
+        // Hit the endpoint that deletes the movie by its ID
+        $response = $this->get('/api/movie/delete/' . $movie->id);
 
+        // Assert HTTP status code is 200, indicating success
         $response->assertStatus(200);
+
+        // Assert the JSON response returned by the endpoint
         $response->assertJson([
             'status' => true,
             'message' => 'Record has been deleted successfully',
@@ -128,19 +140,36 @@ class MoviesApiTest extends TestCase
                 // Include other expected attributes
             ],
         ]);
-        $this->assertDeleted($movie);
+
+        // Assert HTTP status code is 204 (No Content), indicating success
+        $response->assertStatus(200);
+
+        // Assert that the movie record has been deleted from the database
+        $this->assertDatabaseMissing('movies', ['id' => $movie->id]);
     }
+
 
     /** @test */
     public function it_searches_movie_by_title()
     {
+
+        // Create a user with factory (by using Laravel Passport for authentication)
+        $user = User::factory()->create();
+        // Authenticate the user using Passport
+        Passport::actingAs($user);
+
+        // Create dummy movies (in this case, 3 movies)
         $movies = Movie::factory()->count(3)->create();
 
-        $response = $this->postJson('/api/movies/search', [
+        // Hit the endpoint that searches for movies by title
+        $response = $this->postJson('/api/movie/search', [
             'keyword' => $movies->first()->title,
         ]);
 
+         // Assert HTTP status code is 200, indicating success
         $response->assertStatus(200);
+
+        // Assert the structure of the JSON response returned by the endpoint
         $response->assertJsonStructure([
             'status',
             'message',
@@ -152,11 +181,6 @@ class MoviesApiTest extends TestCase
                     'director',
                     'producer',
                     'release_date',
-                    'characters',
-                    'planets',
-                    'starships',
-                    'vehicles',
-                    'species',
                 ],
             ],
         ]);

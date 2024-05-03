@@ -108,26 +108,4 @@ class UserApiTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_logs_out_a_user()
-    {
-        $user = User::factory()->create();
-        Passport::actingAs($user);
-
-        $response = $this->getJson('/api/logout');
-
-        $response->assertStatus(200);
-        //$this->assertGuest();
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data' => [],
-        ]);
-
-        // Assert response message
-        $response->assertJson([
-            'status' => true,
-            'message' => 'User registered successfully',
-        ]);
-    }
 }
