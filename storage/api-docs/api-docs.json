@@ -1,0 +1,214 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Star Wars APIs",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Register User"
+                ],
+                "summary": "Register a new user",
+                "description": "Register a new user with the provided information.",
+                "operationId": "82447091133210fc21daa20fe7bee91b",
+                "requestBody": {
+                    "description": "User information",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "The name of the user",
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "description": "The email address of the user",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "description": "The password for the user account",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Confirmation of the password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully"
+                    },
+                    "400": {
+                        "description": "Bad request. Invalid input"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication/Login user"
+                ],
+                "summary": "Login user",
+                "description": "Login a user with the provided credentials.",
+                "operationId": "f6d04be1de7bb4a85327471c8d3d1e42",
+                "requestBody": {
+                    "description": "User credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "The email address of the user",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "description": "The password for the user account",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "401": {
+                        "description": "Unauthorized. Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/api/profile/id": {
+            "get": {
+                "tags": [
+                    "User profile"
+                ],
+                "summary": "Get authenticated user profile",
+                "operationId": "030dcb5b81bb6812ce9166447b6cbaba",
+                "responses": {
+                    "200": {
+                        "description": "Retrieve the profile of the authenticated user"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "get": {
+                "tags": [
+                    "Logout"
+                ],
+                "summary": "Log out user",
+                "operationId": "4d6287c225555da7021bc39336b00b71",
+                "responses": {
+                    "200": {
+                        "description": "Log out the authenticated user"
+                    }
+                }
+            }
+        },
+        "/api/movies": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get all movies",
+                "operationId": "f1b3cb64ae74885cdcf404eebe09485f",
+                "responses": {
+                    "200": {
+                        "description": "List of movies"
+                    }
+                }
+            }
+        },
+        "/api/movie/{id}": {
+            "get": {
+                "tags": [
+                    "Show movie"
+                ],
+                "summary": "Get movie by id",
+                "operationId": "57e1f670106cc5c3ab484baabfffa961",
+                "responses": {
+                    "200": {
+                        "description": "Get movie by id"
+                    }
+                }
+            }
+        },
+        "api/movie/update/{id}": {
+            "get": {
+                "tags": [
+                    "Update movie"
+                ],
+                "summary": "Update movie information",
+                "operationId": "035cbed0b4aa16e7b9ed6ac7951671c8",
+                "responses": {
+                    "200": {
+                        "description": "Update movie record by id"
+                    }
+                }
+            }
+        },
+        "api/movie/delete/{id}": {
+            "get": {
+                "tags": [
+                    "Delete movie"
+                ],
+                "summary": "Delete movie",
+                "operationId": "831cfbed68624e09ed1436f017fef25a",
+                "responses": {
+                    "200": {
+                        "description": "Delete movie by id"
+                    }
+                }
+            }
+        },
+        "api/movies/search": {
+            "get": {
+                "tags": [
+                    "Search movies"
+                ],
+                "summary": "Search movies",
+                "operationId": "655fe5763abcb7903c1b817a57d4a20f",
+                "responses": {
+                    "200": {
+                        "description": "Search movies by title"
+                    }
+                }
+            }
+        }
+    }
+}

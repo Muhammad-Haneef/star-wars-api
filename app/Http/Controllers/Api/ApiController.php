@@ -24,11 +24,30 @@ class ApiController extends Controller
      *   Activity : Register a new user.
      */
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/api/register",
-     *     tags={"Register user"},
-     *     summary="Register new user",
-     *     @OA\Response(response="200", description="Register new user")
+     *     summary="Register a new user",
+     *     description="Register a new user with the provided information.",
+     *     tags={"Register User"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="User information",
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password", "password_confirmation"},
+     *             @OA\Property(property="name", type="string", example="John Doe", description="The name of the user"),
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com", description="The email address of the user"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123", description="The password for the user account"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="password123", description="Confirmation of the password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User registered successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad request. Invalid input"
+     *     )
      * )
      */
     public function register(Request $request)
@@ -74,11 +93,28 @@ class ApiController extends Controller
      *    Activity : Authenticate a user's login request.
      */
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/api/login",
-     *     tags={"Login user"},
-     *     summary="Login existing user",
-     *     @OA\Response(response="200", description="Authenticate a user's login request")
+     *     summary="Login user",
+     *     description="Login a user with the provided credentials.",
+     *     tags={"Authentication/Login user"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="User credentials",
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com", description="The email address of the user"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123", description="The password for the user account")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized. Invalid credentials"
+     *     )
      * )
      */
     public function login(Request $request)
@@ -175,7 +211,7 @@ class ApiController extends Controller
      *     summary="Log out user",
      *     @OA\Response(response="200", description="Log out the authenticated user")
      * )
-     */    
+     */
     public function logout(Request $request)
     {
         // Retrieve the token associated with the authenticated user
