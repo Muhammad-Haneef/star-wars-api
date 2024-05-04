@@ -23,6 +23,14 @@ class ApiController extends Controller
      *   Parameters : name, email, password, password_confirmation
      *   Activity : Register a new user.
      */
+    /**
+     * @OA\Get(
+     *     path="/api/register",
+     *     tags={"Register user"},
+     *     summary="Register new user",
+     *     @OA\Response(response="200", description="Register new user")
+     * )
+     */
     public function register(Request $request)
     {
 
@@ -60,11 +68,19 @@ class ApiController extends Controller
 
 
 
-    /*
-        Method : POST
-        Parameters : email, password
-        Activity : Authenticate a user's login request.
-    */
+    /**
+     *    Method : POST
+     *    Parameters : email, password
+     *    Activity : Authenticate a user's login request.
+     */
+    /**
+     * @OA\Get(
+     *     path="/api/login",
+     *     tags={"Login user"},
+     *     summary="Login existing user",
+     *     @OA\Response(response="200", description="Authenticate a user's login request")
+     * )
+     */
     public function login(Request $request)
     {
         // Validate the incoming request data
@@ -88,9 +104,9 @@ class ApiController extends Controller
                     "message" => "User authenticated successfully",
                     "token" => $token,
                     "data" => [
-                        'id'=>$user->id,
-                        'name'=>$user->name,
-                        'email'=>$user->email,
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
                     ],
                 ]);
             } else {
@@ -118,11 +134,19 @@ class ApiController extends Controller
 
 
 
-    /*
-        Method : GET
-        Parameters : token in header
-        Activity : Retrieve the profile of the authenticated user.
-    */
+    /**
+     *    Method : GET
+     *    Parameters : token in header
+     *    Activity : Retrieve the profile of the authenticated user.
+     */
+    /**
+     * @OA\Get(
+     *     path="/api/profile/id",
+     *     tags={"User profile"},
+     *     summary="Get authenticated user profile",
+     *     @OA\Response(response="200", description="Retrieve the profile of the authenticated user")
+     * )
+     */
     public function profile(Request $request)
     {
         // Retrieve user information
@@ -139,11 +163,19 @@ class ApiController extends Controller
 
 
 
-    /*
-        Method : GET
-        Parameters : token in header
-        Activity : Log out the authenticated user.
-    */
+    /**
+     *    Method : GET
+     *    Parameters : token in header
+     *    Activity : Log out the authenticated user.
+     */
+    /**
+     * @OA\Get(
+     *     path="/api/logout",
+     *     tags={"Logout"},
+     *     summary="Log out user",
+     *     @OA\Response(response="200", description="Log out the authenticated user")
+     * )
+     */    
     public function logout(Request $request)
     {
         // Retrieve the token associated with the authenticated user

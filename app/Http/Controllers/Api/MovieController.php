@@ -22,6 +22,15 @@ class MovieController extends Controller
      *   Parameters : token in header
      *   Activity : Get list of all movies.
      */
+
+    /**
+     * @OA\Get(
+     *     path="/api/movies",
+     *     tags={"Movies"},
+     *     summary="Get all movies",
+     *     @OA\Response(response="200", description="List of movies")
+     * )
+     */
     public function index()
     {
         // Retrieve all movies
@@ -72,6 +81,14 @@ class MovieController extends Controller
      *   Parameters : token in header, id
      *   Activity : Get perticular movie by id.
      */
+    /**
+     * @OA\Get(
+     *     path="/api/movie/{id}",
+     *     tags={"Show movie"},
+     *     summary="Get movie by id",
+     *     @OA\Response(response="200", description="Get movie by id")
+     * )
+     */          
     public function show($id)
     {
         // Retrieve the movie by id
@@ -107,6 +124,14 @@ class MovieController extends Controller
      *   Parameters : token in header, title, opening_crawl, director, producer, release_date
      *   Activity : Update movie record.
      */
+    /**
+     * @OA\Get(
+     *     path="api/movie/update/{id}",
+     *     tags={"Update movie"},
+     *     summary="Update movie information",
+     *     @OA\Response(response="200", description="Update movie record by id")
+     * )
+     */      
     public function update(Request $request, $id)
     {
         // Validate the incoming request data
@@ -119,7 +144,7 @@ class MovieController extends Controller
         ]);
 
         // Retrieve the movie by id
-        $movie = Movie::find($id);        
+        $movie = Movie::find($id);
 
         // Check if the movie exists
         if ($movie) {
@@ -161,6 +186,14 @@ class MovieController extends Controller
      *   Parameters : token in header, id
      *   Activity : Delete movie record by id.
      */
+    /**
+     * @OA\Get(
+     *     path="api/movie/delete/{id}",
+     *     tags={"Delete movie"},
+     *     summary="Delete movie",
+     *     @OA\Response(response="200", description="Delete movie by id")
+     * )
+     */        
     public function destroy(string $id)
     {
         // Retrieve the movie by id
@@ -187,7 +220,7 @@ class MovieController extends Controller
         }
     }
 
-    
+
     /**
      * Remove the specified resource from storage.
      * 
@@ -195,6 +228,14 @@ class MovieController extends Controller
      *   Parameters : token in header, title
      *   Activity : Search movie by title
      */
+    /**
+     * @OA\Get(
+     *     path="api/movies/search",
+     *     tags={"Search movies"},
+     *     summary="Search movies",
+     *     @OA\Response(response="200", description="Search movies by title")
+     * )
+     */      
     public function search(Request $request)
     {
 
@@ -204,13 +245,13 @@ class MovieController extends Controller
         ]);
 
 
-       // Retrieve all movies with complete dat
+        // Retrieve all movies with complete dat
         //$movies = Movie::where('title', 'like', '%' . $keyword . '%')->get();
 
         // Retrieve all movies with most relevant data.
         $movies = Movie::select('id', 'title', 'opening_crawl', 'director', 'producer', 'release_date')->where('title', 'like', '%' . $request->keyword . '%')->get();
 
-       // Check if movies exist
+        // Check if movies exist
         if (count($movies) > 0) {
 
             /*
@@ -228,15 +269,13 @@ class MovieController extends Controller
                 "data" => $movies,
             ]);
         } else {
-           // Return a JSON response with failure message
+            // Return a JSON response with failure message
             return response()->json([
                 "status" => false,
                 "message" => "No serch result found.",
                 "data" => [],
             ]);
         }
-
-
     }
 
 
