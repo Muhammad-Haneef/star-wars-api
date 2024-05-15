@@ -111,10 +111,6 @@ class ApiController extends Controller
      *         response=200,
      *         description="Login successful"
      *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized. Invalid credentials"
-     *     )
      * )
      */
     public function login(Request $request)

@@ -105,9 +105,6 @@
                 "responses": {
                     "200": {
                         "description": "Login successful"
-                    },
-                    "401": {
-                        "description": "Unauthorized. Invalid credentials"
                     }
                 }
             }
